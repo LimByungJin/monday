@@ -1,0 +1,38 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib
+import seaborn as sns
+
+font_name = matplotlib.font_manager.FontProperties(fname='C:/Windows/Fonts/malgun.ttf').get_name()
+matplotlib.rc('font', family=font_name)
+
+file1_paths = [r"이용정보파일1-1", r"파일1-2", r"파일1-3"]
+
+# df1 = pd.read_csv(file_path, encoding='utf-8')
+
+df1_list = []
+for file in file1_paths:
+    df = pd.read_csv(file, encoding='utf-8-sig')  # cp949로 인코딩 지정
+    df1_list.append(df)
+
+df1 = pd.concat(df1_list, ignore_index=True)
+
+
+
+file2_paths = [r"대여소파일2-1", r"파일2-2", r"파일2-3"]
+
+df2_list = []
+for file in file2_paths:
+    df = pd.read_csv(file, encoding='cp949')  # cp949로 인코딩 지정
+    df2_list.append(df)
+
+df2 = pd.concat(df2_list, ignore_index=True)
+
+df2 = df2.drop_duplicates(subset='대여소명')
+
+df = pd.merge(df1, df2[['대여소명','자치구']], on='대여소명', how='left')
+df.dropna(subset=['자치구'], inplace=True)
+
+# 결과 확인 ok
+print(df.head())
+print(df.tail())
